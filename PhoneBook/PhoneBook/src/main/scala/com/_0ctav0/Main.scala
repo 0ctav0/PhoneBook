@@ -4,12 +4,18 @@ import javax.servlet.http.{HttpServlet,
 class Main extends HttpServlet
 {
   def message =
-    <HTML>
-      <HEAD><TITLE>Hello, Scala!</TITLE></HEAD>
-      <BODY>Hello, Scala! It's now { currentDate }</BODY>
-    </HTML>
+    <html>
+      <head><title>Hello, Scala!</title></head>
+      <body>Привет, { name } Сейчас { currentDate }</body>
+    </html>
   def currentDate = java.util.Calendar.getInstance().getTime()
+  var name = "";
+  
+  println("I has been created.")
 
-  override def doGet(req : HSReq, resp : HSResp) =
+  override def doGet(req : HSReq, resp : HSResp) = {
+    resp setContentType "text/html;charset=utf-8"
+    name = req getParameter "username" toUpperCase()
     resp.getWriter print message
+  }
 }
