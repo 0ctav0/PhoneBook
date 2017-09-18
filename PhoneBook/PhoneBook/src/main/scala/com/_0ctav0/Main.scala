@@ -1,22 +1,37 @@
 import javax.servlet.http.{HttpServlet, HttpServletRequest => HSReq, HttpServletResponse => HSResp}
-import scala.collection.mutable.MutableList
-import javax.servlet.AsyncContext
-import javax.servlet.ServletContext
+import scala.collection.mutable.ListBuffer
+import scala.util.control.Breaks._
 
 class Main extends HttpServlet {
   
-  private var name = ""
-  private var phone = ""
   private var phoneBook = new PhoneBook()
   
   println("Main class has been created")
   
   
   override def doPost(req : HSReq, resp : HSResp) = {
+    
     req.setCharacterEncoding("utf-8")
-    name = req.getParameter("pb_name")
-    phone = req.getParameter("pb_phone")
     resp.setContentType("text/html;charset=utf-8")
+    var action = req.getParameter("action")
+    
+    if ( action.equals("add") ) {
+      processAdd(req, resp)
+    } else if ( action.equals("list") ) {
+      processShowList(req, resp)
+    } else if ( action.equals("del") ) {
+      processDelete(req, resp)
+    }
+    
+
+  }
+  
+  
+  def processAdd(req : HSReq, resp : HSResp) = { 
+    
+    var name = req.getParameter("name")
+    var phone = req.getParameter("phone")
+    
     if ( name.isEmpty || phone.isEmpty ) {
       resp.setStatus(418)
       resp.getWriter.print("Необходимо заполнить поля")
@@ -26,36 +41,75 @@ class Main extends HttpServlet {
     } else {
       phoneBook.add(name, phone)
     }
-    
-    
-    //
-    //resp.setStatus(200);
-    //resp.getWriter.print("Запись успешно добавлена")
   }
+  
+  def processShowList(req : HSReq, resp : HSResp) = {
+    
+    var substring = req.getParameter("substring")
+    
+  }
+  
+  def processDelete(req : HSReq, resp : HSResp) = {
+    
+    var name = req.getParameter("name")
+    var phone = req.getParameter("phone")
+    
+    
+    if ( name.isEmpty || phone.isEmpty ) {
+      resp.setStatus(418)
+      resp.getWriter.print("Необходимо заполнить поля")
+    } else {
+      var n = phoneBook.getNumber(name, phone)
+      if ( n != -1 ) {
+        phoneBook.delete(n, name, phone)
+        resp.setStatus(200)
+      } else {
+        resp.setStatus(500)
+        resp.getWriter.print("Данное имя-номер не найдено")
+      }
+    }
+  }
+  
 }
 
 class PhoneBook() {
 
-  private var list = MutableList[PhoneName]()
+  private var list = ListBuffer[PhoneName]()
   
   def add(name : String, phone : String) = {
     list += new PhoneName(name, phone)
     printf("\"%s\" has been added with number: \"%s\"\n", getLast.getName, getLast.getPhone)
   }
   
+  def delete(n : Integer, name : String, phone : String) = {
+    list.remove(n)
+    printf("\"%s\" has been deleted with number: \"%s\"\n", name, phone)
+    println(list.toString())
+  }
+  
   def getLast() = list(list.length-1)
   
   def isHas(name : String, phone : String) : Boolean = {
-//    var e = new PhoneName(name, phone);
-//    var b = false;
-//    for ( e <- list ) {
-//      if ( e.getName.equalsIgnoreCase(e.getName) && e.getPhone.equalsIgnoreCase(e.getPhone) ) {
-//        return true
-//      }
-//    }
-    //var elements = new MutableList[PhoneName]()
-    return list.exists( p => (p.getName.equalsIgnoreCase(name)) && (p.getPhone.equalsIgnoreCase(phone)) )
+    return list.exists( p => (p.getName.equals(name)) && (p.getPhone.equals(phone)) )
   }
+  
+  def getNumber(name : String, phone : String) : Integer = {
+    var i = 0
+    var pos = -1
+    breakable {
+      for ( p <- list ) {
+        if ( (p.getName.equals(name)) && (p.getPhone.equals(phone))) {
+          pos = i
+          break 
+        }
+        i += 1
+      }
+    }
+    return pos
+  }
+  
+  
+  
   
   protected class PhoneName(nameIn : String, phoneIn : String) {
     
@@ -64,5 +118,6 @@ class PhoneBook() {
     def getName() = name
     def getPhone() = phone
   }
+  
 }
 
