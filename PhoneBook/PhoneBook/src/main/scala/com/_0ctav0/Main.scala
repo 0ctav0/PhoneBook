@@ -1,6 +1,8 @@
 import javax.servlet.http.{HttpServlet, HttpServletRequest => HSReq, HttpServletResponse => HSResp}
 import scala.collection.mutable.ListBuffer
 import scala.util.control.Breaks._
+import scala.xml._
+import java.io.InputStream
 
 class Main extends HttpServlet {
   
@@ -35,7 +37,7 @@ class Main extends HttpServlet {
     if ( name.isEmpty || phone.isEmpty ) {
       resp.setStatus(418)
       resp.getWriter.print("Необходимо заполнить поля")
-    } else if ( phoneBook.isHas(name, phone) ) {
+    } else if ( phoneBook.getNumber(name, phone) != -1 ) {
       resp.setStatus(500)
       resp.getWriter.print("Данное имя-номер занят")
     } else {
@@ -45,8 +47,8 @@ class Main extends HttpServlet {
   
   def processShowList(req : HSReq, resp : HSResp) = {
     
-    var substring = req.getParameter("substring")
-    
+    var substring = req.getParameter("sub")
+    resp.getWriter.print(phoneBook.showList(substring))
   }
   
   def processDelete(req : HSReq, resp : HSResp) = {
@@ -84,14 +86,15 @@ class PhoneBook() {
   def delete(n : Integer, name : String, phone : String) = {
     list.remove(n)
     printf("\"%s\" has been deleted with number: \"%s\"\n", name, phone)
-    println(list.toString())
   }
+  
+  def showList(substring : String) : String = {
+    val filteredList = list.filter(p => p.getName.indexOf(substring) != -1)
+    <pb>{ filteredList.map(p => p.toXML) }</pb>.toString()  // return xml string
+  }
+  
   
   def getLast() = list(list.length-1)
-  
-  def isHas(name : String, phone : String) : Boolean = {
-    return list.exists( p => (p.getName.equals(name)) && (p.getPhone.equals(phone)) )
-  }
   
   def getNumber(name : String, phone : String) : Integer = {
     var i = 0
@@ -117,6 +120,7 @@ class PhoneBook() {
     private var phone = phoneIn
     def getName() = name
     def getPhone() = phone
+    def toXML() = <pn><name>{name}</name><phone>{phone}</phone></pn>
   }
   
 }

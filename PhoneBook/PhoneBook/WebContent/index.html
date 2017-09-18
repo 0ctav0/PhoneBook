@@ -3,27 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="styles.css"/>
-<script src="app.js"></script>
-<title>Insert title here</title>
+<script src="js/jquery-3.1.1.min.js"></script>
+<script src="js/app.js"></script>
+<title>Phone Book</title>
 </head>
 <body>
-<p>Добавление:</p>
-<p>Телефон: <input type="text" id="add_phone"/></p>
-<p>    Имя: <input type="text" id="add_name"/></p>
-<input id="add_btn" type="submit" value="send"/>
-<p id="add_res"></p>
-
-<p>Удаление:</p>
-
-<p>Телефон: <input type="text" id="del_phone"/></p>
-<p>    Имя: <input type="text" id="del_name"/></p>
-<input id="del_btn" type="submit" value="send"/>
-<p id="del_res"></p>
+<div id="main">
+	<div id="div_add">
+		Телефон: <input type="text" id="add_phone"/> 
+		Имя: <input type="text" id="add_name"/>
+		<input id="add_btn" type="submit" value="Добавить"/>
+	</div>
+	<div id="div_fd">
+		Поиск: <input type="text" id="sub"/>
+		<input id="del_btn" type="submit" value="Удалить"/>
+	</div>
+	<ul id="list">
+	</ul>
+	<p id="res">Результат:</p>	
+</div>
 </body>
 </html>
-
-
-
-
-
-

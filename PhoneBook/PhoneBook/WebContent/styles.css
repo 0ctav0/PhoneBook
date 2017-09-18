@@ -1,1 +1,56 @@
 @charset "UTF-8";
+
+#main {
+	background-color: #eee;
+	border: 1px solid black;
+	width: 400px;
+	margin: 30px;
+}
+
+#main > * {
+	margin: 10px;
+}
+
+#div_add > input {
+	width: 85px;
+}
+
+#div_fd > input[type="text"] {
+	width: 235px;
+}
+
+#del_btn {
+	width: 83px;
+}
+
+#list {
+	width: 380px;
+	height: 200px;
+	background-color: #ddd;
+	padding: 0;
+	list-style-type: none;
+	border: 1px solid black;
+	overflow: auto;
+}
+
+#selected {
+	color: #1c1;
+	font-size: 22px;	
+}
+
+#list li {
+	padding: 5px 10px 5px 20px;
+	font-size: 18px;
+	
+}
+
+#list li pre {
+	display: inline;
+}
+
+#list li:hover {
+	color: #1c1;
+	font-size: 22px;
+	cursor: pointer;
+}
+
